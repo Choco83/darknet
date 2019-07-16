@@ -269,6 +269,7 @@ def detect_image(net, meta, im, thresh=.5, hier_thresh=.5, nms=.45, debug= False
             if debug: print("Class-ranging on "+str(i)+" of "+str(meta.classes)+"= "+str(dets[j].prob[i]))
             if dets[j].prob[i] > 0:
                 b = dets[j].bbox
+                d = dets[j].distance
                 if altNames is None:
                     nameTag = meta.names[i]
                 else:
@@ -278,7 +279,7 @@ def detect_image(net, meta, im, thresh=.5, hier_thresh=.5, nms=.45, debug= False
                     print(nameTag)
                     print(dets[j].prob[i])
                     print((b.x, b.y, b.w, b.h))
-                res.append((nameTag, dets[j].prob[i], (b.x, b.y, b.w, b.h)))
+                res.append((nameTag, dets[j].prob[i], (b.x, b.y, b.w, b.h), d))
     if debug: print("did range")
     res = sorted(res, key=lambda x: -x[1])
     if debug: print("did sort")
@@ -394,6 +395,7 @@ def performDetect(imagePath="data/dog.jpg", thresh= 0.25, configPath = "./cfg/yo
                 imcaption.append(pstring)
                 print(pstring)
                 bounds = detection[2]
+                distance = detection[3]
                 shape = image.shape
                 # x = shape[1]
                 # xExtent = int(x * bounds[2] / 100)
@@ -429,6 +431,7 @@ def performDetect(imagePath="data/dog.jpg", thresh= 0.25, configPath = "./cfg/yo
                 "detections": detections,
                 "image": image,
                 "caption": "\n<br/>".join(imcaption)
+                "distance": distance
             }
         except Exception as e:
             print("Unable to show image: "+str(e))
